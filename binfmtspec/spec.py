@@ -16,6 +16,7 @@ class BinarySpec(object):
     option_line: BinarySpecLine
 
     variable_count: int
+    byte_offset: int
 
     def __init__(self):
         self.positions = []
@@ -28,13 +29,14 @@ class BinarySpec(object):
         self.repeat_line = BinarySpecLine("loop")
         self.option_line = BinarySpecLine("optional")
         self.start_items = []
+        self.byte_offset = 1
 
     def add_bytes(self, count: int):
         for i in range(count):
             self.positions.append({
                 "start": self.current_position,
                 "length": 1,
-                "text": str(self.current_position - 1)
+                "text": str(self.current_position - self.byte_offset)
             })
             self.current_position += 1
 
@@ -45,17 +47,24 @@ class BinarySpec(object):
             "text": "..."
         })
         self.current_position += 1
+        self.byte_offset += 1
 
     def rename_level(self, level: int, text: str):
         self.scope_line.rename_level(level, text)
 
-    def render(self, font_size: float = 10, font_family: str = ""):
+    def render(self, options: BinarySpecRendererOptions):
+
+        final_options: BinarySpecRendererOptions = {
+            "font_size": options["font_size"] if "font_size" in options else 15,
+            "font_family": options["font_family"] if "font_family" in options else "arial.ttf",
+        }
+
         renderer = BinarySpecImgRenderer(self.positions, [
             self.scope_line,
             self.variable_line,
             self.option_line,
             self.repeat_line,
-        ], self.current_position, font_size)
+        ], self.current_position, final_options)
 
         return renderer.render()
 

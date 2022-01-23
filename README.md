@@ -44,7 +44,10 @@ s = BinarySpec()
 u24_le_list(s) # render the u24_le_list structure
 
 s.rename_level(2, "type") # renames "scope ln. 3" to "type"
-s.render(20) # returns PIL image
+s.render({
+    "font_size": 15,
+    "font_family": "comic.ttf"
+}) # returns PIL image
 ```
 ![example output](img/example.png "example output")
 

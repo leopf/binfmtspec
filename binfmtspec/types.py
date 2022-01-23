@@ -9,3 +9,8 @@ class BinarySpecItem(BinarySpecStartItem):
 
 class MultiLevelBinarySpecItem(BinarySpecItem):
     level: int
+
+class BinarySpecRendererOptions(TypedDict):
+    font_size: float
+    font_family: str
+    

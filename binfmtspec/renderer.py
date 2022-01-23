@@ -7,21 +7,21 @@ import math
 class BinarySpecImgRenderer(object):
     lines: List[BinarySpecLine]
     positions: List[BinarySpecItem]
-    font_size: float
 
     row_height: int
     table_width: int
 
     column_starts: List[int]
     column_count: int
-    
-    def __init__(self, positions: List[BinarySpecItem], lines: List[BinarySpecLine], column_count: int, font_size: float):
-        self.font_size = font_size
+    options: BinarySpecRendererOptions
+
+    def __init__(self, positions: List[BinarySpecItem], lines: List[BinarySpecLine], column_count: int, options: BinarySpecRendererOptions):
         self.positions = positions
         self.lines = lines
         self.column_count = column_count
         self.row_height = 0
         self.column_starts = list([ 0 for _ in range(self.column_count + 1) ])
+        self.options = options
 
     def measure_cell_dims(self, font: ImageFont):
         items = self.get_all_items()
@@ -76,7 +76,7 @@ class BinarySpecImgRenderer(object):
         draw.line([ 0, box_y, self.table_width - 1, box_y ], fill=0x000000, width=1)
 
     def render(self):
-        font = ImageFont.truetype("arial.ttf", self.font_size)
+        font = ImageFont.truetype(self.options["font_family"], self.options["font_size"])
         self.measure_cell_dims(font)
 
         row_count = 1 + sum([ line.level_count for line in self.lines ])
