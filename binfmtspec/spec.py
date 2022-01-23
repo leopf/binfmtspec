@@ -18,11 +18,14 @@ class BinarySpec(object):
     variable_count: int
     byte_offset: int
 
+    used_vars: List[str]
+
     def __init__(self):
         self.positions = []
         self.recursion_detection = []
         self.current_position = 1
         self.variable_count = 0
+        self.used_vars = []
         
         self.scope_line = BinarySpecLine("scope")
         self.variable_line = BinarySpecLine("variable")
@@ -68,8 +71,21 @@ class BinarySpec(object):
 
         return renderer.render()
 
-    def start_var(self):
-        var_name = get_variable_name_from_int(self.variable_count)
+    def start_var(self, name: str = None):
+        if name:
+            if name in self.used_vars:
+                start_idx = 1
+                var_name = name + "_{}".format(start_idx)
+                while var_name in self.used_vars:
+                    start_ids += 1
+                    var_name = name + "_{}".format(start_idx)
+            else:
+                var_name = name
+        else:
+            var_name = get_variable_name_from_int(self.variable_count)
+
+        self.used_vars.append(var_name)
+
         self.variable_count += 1
         self.variable_line.open_scope("={}".format(var_name), self.current_position)
         return var_name
